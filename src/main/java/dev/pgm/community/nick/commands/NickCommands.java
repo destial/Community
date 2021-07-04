@@ -57,7 +57,10 @@ public class NickCommands extends CommunityCommand {
 
               Component formattedTitle =
                   TextFormatter.horizontalLineHeading(
-                      audience.getSender(), text("Available Nicks"), NamedTextColor.DARK_AQUA, 250);
+                      audience.getSender(),
+                      text("Select a nickname"),
+                      NamedTextColor.DARK_AQUA,
+                      250);
 
               new PaginatedComponentResults<String>(formattedTitle, resultsPerPage) {
                 @Override
@@ -87,7 +90,7 @@ public class NickCommands extends CommunityCommand {
                 if (page > 1) {
                   buttons.append(
                       text()
-                          .append(text("Refresh", NamedTextColor.BLUE))
+                          .append(text("Click for more names", NamedTextColor.BLUE))
                           .hoverEvent(
                               HoverEvent.showText(
                                   text("Click to refresh nick selection", NamedTextColor.GRAY)))
@@ -101,7 +104,7 @@ public class NickCommands extends CommunityCommand {
                 if (page < pages) {
                   buttons.append(
                       text()
-                          .append(text("Refresh", NamedTextColor.BLUE))
+                          .append(text("Click for more names", NamedTextColor.BLUE))
                           .hoverEvent(
                               HoverEvent.showText(
                                   text("Click to refresh nick selection", NamedTextColor.GRAY)))
