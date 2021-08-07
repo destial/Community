@@ -3,6 +3,7 @@ package dev.pgm.community.users.services;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import dev.pgm.community.Community;
 import dev.pgm.community.database.DatabaseConnection;
 import dev.pgm.community.feature.SQLFeatureBase;
 import dev.pgm.community.users.UserProfile;
@@ -21,7 +22,7 @@ import tc.oc.pgm.util.concurrent.ThreadSafeConnection.Query;
 public class SQLUserService extends SQLFeatureBase<UserProfile, String> {
 
   private static final String TABLE_FIELDS =
-      "(id VARCHAR(36) PRIMARY KEY, name VARCHAR(16), first_join LONG, join_count INT)";
+      "(id VARCHAR(36) PRIMARY KEY, name VARCHAR(16), first_join LONG, last_join LONG, join_count INT, server VARCHAR(255))";
   private static final String TABLE_NAME = "users";
 
   private LoadingCache<UUID, SelectProfileQuery> profileCache;
@@ -119,7 +120,7 @@ public class SQLUserService extends SQLFeatureBase<UserProfile, String> {
   private class InsertQuery implements Query {
 
     private static final String INSERT_USERNAME_QUERY =
-        "INSERT INTO " + TABLE_NAME + " VALUES (?,?,?,?)";
+        "INSERT INTO " + TABLE_NAME + " VALUES (?,?,?,?,?,?)";
 
     private UserProfile profile;
 
@@ -137,7 +138,9 @@ public class SQLUserService extends SQLFeatureBase<UserProfile, String> {
       statement.setString(1, profile.getId().toString());
       statement.setString(2, profile.getUsername());
       statement.setLong(3, profile.getFirstLogin().toEpochMilli());
-      statement.setInt(4, profile.getJoinCount());
+      statement.setLong(4, profile.getFirstLogin().toEpochMilli());
+      statement.setInt(5, profile.getJoinCount());
+      statement.setString(6, Community.get().getServerConfig().getServerId());
       statement.execute();
     }
   }
@@ -180,9 +183,16 @@ public class SQLUserService extends SQLFeatureBase<UserProfile, String> {
         final UUID id = UUID.fromString(result.getString("id"));
         final String username = result.getString("name");
         final long firstJoin = result.getLong("first_join");
+        final long lastJoin = result.getLong("last_join");
         final int joinCount = result.getInt("join_count");
+
         this.profile =
-            new UserProfileImpl(id, username, Instant.ofEpochMilli(firstJoin), joinCount);
+            new UserProfileImpl(
+                id,
+                username,
+                Instant.ofEpochMilli(firstJoin),
+                Instant.ofEpochMilli(lastJoin),
+                joinCount);
       }
     }
   }

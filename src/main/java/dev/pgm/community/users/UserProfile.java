@@ -35,6 +35,13 @@ public interface UserProfile {
   Instant getFirstLogin();
 
   /**
+   * @deprecated Legacy use for players that have yet to gain a session
+   * @see {@link #getLatestSession()}
+   * @return Date of last login
+   */
+  Instant getLastLogin();
+
+  /**
    * Get the player's session
    *
    * @return The player's session

@@ -6,22 +6,30 @@ import dev.pgm.community.sessions.feature.SessionFeature;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import javax.annotation.Nullable;
 
 public class UserProfileImpl implements UserProfile {
 
   private UUID playerId;
   private String username;
   private Instant firstLogin;
+  private Instant lastLogin;
   private int joinCount;
 
   public UserProfileImpl(UUID playerId, String username) {
-    this(playerId, username, Instant.now(), 1);
+    this(playerId, username, Instant.now(), null, 1);
   }
 
-  public UserProfileImpl(UUID playerId, String username, Instant firstLogin, int joinCount) {
+  public UserProfileImpl(
+      UUID playerId,
+      String username,
+      Instant firstLogin,
+      @Nullable Instant lastLogin,
+      int joinCount) {
     this.playerId = playerId;
     this.username = username;
     this.firstLogin = firstLogin;
+    this.lastLogin = lastLogin;
     this.joinCount = joinCount;
   }
 
@@ -38,6 +46,11 @@ public class UserProfileImpl implements UserProfile {
   @Override
   public Instant getFirstLogin() {
     return firstLogin;
+  }
+
+  @Override
+  public Instant getLastLogin() {
+    return lastLogin;
   }
 
   @Override

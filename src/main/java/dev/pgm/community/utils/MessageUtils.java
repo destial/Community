@@ -4,7 +4,10 @@ import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 
 import com.google.common.collect.Lists;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -12,6 +15,9 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
 import tc.oc.pgm.util.LegacyFormatUtils;
 import tc.oc.pgm.util.bukkit.BukkitUtils;
+import tc.oc.pgm.util.named.NameStyle;
+import tc.oc.pgm.util.text.PlayerComponent;
+import tc.oc.pgm.util.text.TemporalComponent;
 import tc.oc.pgm.util.text.TextTranslations;
 
 public class MessageUtils {
@@ -47,6 +53,30 @@ public class MessageUtils {
         .append(text(" has never joined the server", NamedTextColor.RED))
         .build();
     // TODO: translate
+  }
+
+  public static Component formatLastSeen(
+      UUID playerId,
+      String username,
+      boolean online,
+      boolean visible,
+      Instant lastSeen,
+      boolean sameServer,
+      String server) {
+    return text()
+        .append(PlayerComponent.player(playerId, username, NameStyle.FANCY))
+        .append(text(visible ? " has been online for " : " was last seen ")) // TODO: translate
+        .append(
+            (visible
+                    ? TemporalComponent.duration(Duration.between(lastSeen, Instant.now())).build()
+                    : TemporalComponent.relativePastApproximate(lastSeen))
+                .color(online ? NamedTextColor.GREEN : NamedTextColor.DARK_GREEN))
+        .append(text(sameServer ? "" : " on "))
+        .append(
+            text(sameServer ? "" : server)
+                .color(online ? NamedTextColor.GREEN : NamedTextColor.DARK_GREEN))
+        .color(NamedTextColor.GRAY)
+        .build();
   }
 
   public static Component formatTokenTransaction(int amount, Component message) {
